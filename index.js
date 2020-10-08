@@ -9,17 +9,6 @@ app.use(morgan("combined"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// app.enable("trust proxy");
-
-// app.use(function (req, res, next) {
-//   res.header("Access-Control-Allow-Origin", "localhost:3000"); // update to match the domain you will make the request from
-//   res.header(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept"
-//   );
-//   next();
-// });
-
 // Endpoint to fetch aggregate of likes
 app.get("/user/:handle/karma", async (req, res) => {
   console.log("REQ PARAMS: ", req.params);
@@ -46,7 +35,6 @@ app.get("/user/:handle/scores-by-subreddit", async (req, res) => {
       score: aggregates[subreddit],
     };
   }
-  console.log("AGGREGATES RETRIEVED: ", scoresBySubreddit);
   res.send({ scoresBySubreddit });
 });
 
