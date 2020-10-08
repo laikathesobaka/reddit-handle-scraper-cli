@@ -12,7 +12,7 @@ const self = {
   page: null,
   initializeOverview: async (redditUrl) => {
     self.browser = await puppeteer.launch({
-      headless: false,
+      headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-infobars"],
     });
     self.page = await self.browser.newPage();
@@ -20,7 +20,7 @@ const self = {
   },
   initializeOverviewPosts: async (redditUrl) => {
     self.browser = await puppeteer.launch({
-      headless: false,
+      headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
     self.page = await self.browser.newPage();
