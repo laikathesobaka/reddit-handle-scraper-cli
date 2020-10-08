@@ -2,8 +2,7 @@
   "name": "reddit-handle-scraper",
   "version": "0.1.0",
   "proxy": "http://[::1]:3001",
-  "predeploy": "yarn build",
-  "deploy": "gh-pages -d build",
+  "homepage": "https://yujin0chung.github.io/reddit-handle-scraper/",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
@@ -22,6 +21,8 @@
     "ws": "^7.3.1"
   },
   "scripts": {
+    "predeploy": "yarn build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
