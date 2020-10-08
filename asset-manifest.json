@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/reddit-handle-scraper/static/css/main.5ecd60fb.chunk.css",
+    "main.js": "/reddit-handle-scraper/static/js/main.be1a9333.chunk.js",
+    "main.js.map": "/reddit-handle-scraper/static/js/main.be1a9333.chunk.js.map",
+    "runtime-main.js": "/reddit-handle-scraper/static/js/runtime-main.0f020936.js",
+    "runtime-main.js.map": "/reddit-handle-scraper/static/js/runtime-main.0f020936.js.map",
+    "static/js/2.908d1194.chunk.js": "/reddit-handle-scraper/static/js/2.908d1194.chunk.js",
+    "static/js/2.908d1194.chunk.js.map": "/reddit-handle-scraper/static/js/2.908d1194.chunk.js.map",
+    "index.html": "/reddit-handle-scraper/index.html",
+    "precache-manifest.47dee5130e7a188e11f108ce6618876e.js": "/reddit-handle-scraper/precache-manifest.47dee5130e7a188e11f108ce6618876e.js",
+    "service-worker.js": "/reddit-handle-scraper/service-worker.js",
+    "static/css/main.5ecd60fb.chunk.css.map": "/reddit-handle-scraper/static/css/main.5ecd60fb.chunk.css.map",
+    "static/js/2.908d1194.chunk.js.LICENSE.txt": "/reddit-handle-scraper/static/js/2.908d1194.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.0f020936.js",
+    "static/js/2.908d1194.chunk.js",
+    "static/css/main.5ecd60fb.chunk.css",
+    "static/js/main.be1a9333.chunk.js"
+  ]
+}
