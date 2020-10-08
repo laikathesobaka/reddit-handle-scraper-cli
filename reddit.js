@@ -13,8 +13,6 @@ const self = {
   initializeOverview: async (redditUrl) => {
     self.browser = await puppeteer.launch({
       headless: false,
-      devtools: true,
-      slowMo: 250,
       args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-infobars"],
     });
     self.page = await self.browser.newPage();
