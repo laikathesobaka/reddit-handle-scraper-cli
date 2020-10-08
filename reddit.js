@@ -68,7 +68,6 @@ const self = {
   },
   parseResults: async () => {
     const elements = await self.page.$$('#siteTable > div[class*="thing"]');
-    console.log("what ARE THE ELEMENTS: ", elements);
     let likes = [];
     for (let element of elements) {
       try {
@@ -157,7 +156,6 @@ function aggregateScoreBySubreddit(scores) {
   const aggregates = {};
   for (const score of scores) {
     if (score) {
-      console.log("SUMMARIZE LIKES  SCORE: ", score);
       aggregates[score.subreddit] = aggregates[score.subreddit]
         ? (aggregates[score.subreddit] += score.score)
         : score.score;

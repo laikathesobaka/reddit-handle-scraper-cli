@@ -11,7 +11,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Endpoint to fetch aggregate of likes
 app.get("/user/:handle/karma", async (req, res) => {
-  console.log("REQ PARAMS: ", req.params);
   const handle = req.params.handle;
   await reddit.initializeOverview(handle);
   const karma = await reddit.getKarma();
@@ -21,7 +20,6 @@ app.get("/user/:handle/karma", async (req, res) => {
 
 // Endpoint to fetch aggregated likes by subreddit
 app.get("/user/:handle/scores-by-subreddit", async (req, res) => {
-  console.log("req.body: ", req.params);
   const handle = req.params.handle;
   await reddit.initializeOverviewPosts(handle);
   let aggregates = await reddit.getScoresBySubreddit();
