@@ -2,6 +2,8 @@
   "name": "reddit-handle-scraper",
   "version": "0.1.0",
   "proxy": "http://[::1]:3001",
+  "predeploy": "yarn build",
+  "deploy": "gh-pages -d build",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
