@@ -1,15 +1,29 @@
 import React from "react";
-import logo from "./logo.svg";
-import "./App.css";
-import Search from "./Search";
+import SearchBar from "./SearchBar";
+import styled from "styled-components";
 
 function App() {
   return (
-    <div className="App">
-      <p>Reddit Handle Scraper</p>
-      <Search />
-    </div>
+    <Container>
+      <Title>Search Reddit user's karma history</Title>
+      <SearchBar />
+    </Container>
   );
 }
 
 export default App;
+
+const Container = styled.div`
+  text-align: center;
+  padding: 40px;
+  margin-top: 30px;
+  font-size: 15px;
+`;
+
+const Title = styled.div`
+  font-size: 20px;
+  font-weight: 500;
+  padding: 20px;
+`;
+
+const Description = styled.div``;

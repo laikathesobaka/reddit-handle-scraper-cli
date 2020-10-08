@@ -21,35 +21,33 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // });
 
 // Endpoint to fetch aggregate of likes
-app.get("/likes/:handle/total", async (req, res) => {
+app.get("/user/:handle/karma", async (req, res) => {
   console.log("REQ PARAMS: ", req.params);
   const handle = req.params.handle;
   await reddit.initializeOverview(handle);
-  const likes = await reddit.getTotalLikes();
-  console.log("TOTAL LIKES :", likes);
-  res.send({ likes });
+  const karma = await reddit.getKarma();
+  console.log("TOTAL LIKES :", karma);
+  res.send({ karma });
 });
 
 // Endpoint to fetch aggregated likes by subreddit
-app.get("/likes/:handle/by-subreddit", async (req, res) => {
+app.get("/user/:handle/scores-by-subreddit", async (req, res) => {
   console.log("req.body: ", req.params);
   const handle = req.params.handle;
-  let aggregates;
-  let groups;
-  let likesBySubreddit = {};
   await reddit.initializeOverviewPosts(handle);
-  aggregates = await reddit.getAggregates();
-  groups = Object.keys(aggregates);
-  const subscriberCount = await reddit.getSubredditSubscriberCount(groups);
-  for (const group of groups) {
-    likesBySubreddit[group] = {
-      subscriberTotal: subscriberCount[group],
-      userLikes: aggregates[group],
+  let aggregates = await reddit.getScoresBySubreddit();
+  let subreddits = Object.keys(aggregates);
+  let scoresBySubreddit = {};
+  const subscriberCount = await reddit.getSubredditSubscriberCount(subreddits);
+  for (const subreddit of subreddits) {
+    scoresBySubreddit[subreddit] = {
+      subreddit,
+      subscriberTotal: subscriberCount[subreddit],
+      score: aggregates[subreddit],
     };
   }
-  console.log("AGGREGATES RETRIEVED: ", likesBySubreddit);
-  // Calculate aggregate worth
-  res.send({ likesBySubreddit });
+  console.log("AGGREGATES RETRIEVED: ", scoresBySubreddit);
+  res.send({ scoresBySubreddit });
 });
 
 if (["production"].includes(process.env.NODE_ENV)) {

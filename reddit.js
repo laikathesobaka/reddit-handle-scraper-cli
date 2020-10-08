@@ -42,7 +42,7 @@ const self = {
     });
     await self.page.goto(REDDIT_URL(redditUrl), { waitUntil: "networkidle0" });
   },
-  getTotalLikes: async () => {
+  getKarma: async () => {
     const interstitialButton = await self.page.$(
       'div[class="content"] > div[class="interstitial"] > form[class="pretty-form"] > div[class="buttons"] > button:nth-child(2)'
     );
@@ -51,34 +51,36 @@ const self = {
       await interstitialButton.click();
       await self.page.waitForNavigation({ waitUntil: "networkidle0" });
     }
-    let commentLikes = await self.page.$eval(
+    let commentKarma = await self.page.$eval(
       'div[class="side"] > div[class="spacer"] > div[class="titlebox"] > span[class="karma comment-karma"]',
       (node) => node.innerText.trim()
     );
-    let postLikes = await self.page.$eval(
+    let postKarma = await self.page.$eval(
       'div[class="side"] > div[class="spacer"] > div[class="titlebox"] > span[class="karma"]',
       (node) => node.innerText.trim()
     );
-    console.log("COMMENT LIKES: ", commentLikes);
-    console.log("POST LIKES: ", postLikes);
-    const likes = {
-      comments: parseInt(commentLikes.replace(/,/g, "")),
-      posts: parseInt(postLikes.replace(/,/g, "")),
+    console.log("COMMENT LIKES: ", commentKarma);
+    console.log("POST LIKES: ", postKarma);
+    return {
+      comments: parseInt(commentKarma.replace(/,/g, "")),
+      posts: parseInt(postKarma.replace(/,/g, "")),
     };
-    return likes;
   },
   parseResults: async () => {
     const elements = await self.page.$$('#siteTable > div[class*="thing"]');
+    console.log("what ARE THE ELEMENTS: ", elements);
     let likes = [];
     for (let element of elements) {
       try {
         let score = await element.$eval('div[class="score unvoted"]', (node) =>
           node.innerText.trim()
         );
+        console.log("PARSE RESULTS SCORE: ", score);
         let subreddit = await element.$eval(
           'p[class="tagline "] > a[class*="subreddit"]',
           (node) => node.innerText.trim()
         );
+        console.log("PARSE RESULTS SUBREDDIT: ", subreddit);
         likes.push({
           score: parseInt(score),
           subreddit,
@@ -89,7 +91,7 @@ const self = {
     }
     return likes;
   },
-  getAggregates: async () => {
+  getScoresBySubreddit: async () => {
     let results = [];
     let new_results = [];
     let nextAmount = 0;
@@ -122,7 +124,7 @@ const self = {
         }
       }
     } while (results.length === nextAmount);
-    return summarizeLikes(results);
+    return aggregateScoreBySubreddit(results);
   },
   getMemberTotals: async (subreddits) => {
     const results = [];
@@ -151,10 +153,11 @@ const self = {
   },
 };
 
-function summarizeLikes(scores) {
+function aggregateScoreBySubreddit(scores) {
   const aggregates = {};
   for (const score of scores) {
     if (score) {
+      console.log("SUMMARIZE LIKES  SCORE: ", score);
       aggregates[score.subreddit] = aggregates[score.subreddit]
         ? (aggregates[score.subreddit] += score.score)
         : score.score;
