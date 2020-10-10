@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import SearchResults from "./SearchResults";
 
-import PuffLoader from "react-spinners/PuffLoader";
+import BarLoader from "react-spinners/BarLoader";
 import { css } from "@emotion/core";
 const override = css`
   display: block;
@@ -12,50 +12,65 @@ const override = css`
 `;
 
 const SearchBar = () => {
-  const [handle, setHandle] = useState("");
+  const [redditHandle, setRedditHandle] = useState("");
+  const [handleInput, setHandleInput] = useState("");
   const [karma, setKarma] = useState({});
   const [scoresBySubreddit, setScoresBySubreddit] = useState({});
-  const [input, setInput] = useState("");
   const [isFetching, setFetchingStatus] = useState(false);
   const [searchSuccess, setSearchStatus] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const setHandleData = async (e) => {
-    const handle = e.target.value.toLowerCase().trim();
-    setHandle(handle);
-    setInput(handle);
+  const fetchKarma = async (handle) => {
+    const res = await axios.get(`/user/${handle}/karma`);
+    const { error, karma } = res.data;
+    if (karma) {
+      setKarma(karma);
+      return true;
+    }
+    setErrorMsg(error.message);
+    return false;
   };
 
-  const fetchHandleData = async (e) => {
+  const fetchScoresBySubreddit = async (handle) => {
+    const res = await axios.get(`/user/${handle}/scores-by-subreddit`);
+    const { error, scoresBySubreddit } = res.data;
+    if (scoresBySubreddit) {
+      setScoresBySubreddit(scoresBySubreddit);
+      return true;
+    }
+    setErrorMsg(error.message);
+    return false;
+  };
+
+  const resetSearch = (status) => {
+    setSearchStatus(status);
+    setFetchingStatus(false);
+    setHandleInput("");
+  };
+
+  const fetchHandleData = async (e, handle) => {
     e.preventDefault();
     setFetchingStatus(true);
-    let success = true;
-    try {
-      let res = await axios.get(`/user/${handle}/karma`);
-      console.log("TOTAL LIKES RES: ", res.data);
-      setKarma(res.data.karma);
-    } catch (err) {
-      setSearchStatus(false);
-      console.log("Error occurred retrieving karma: ", err.message);
+    let success = await fetchKarma(handle);
+    if (!success) {
+      resetSearch(success);
+      return;
     }
-    try {
-      let res = await axios.get(`/user/${handle}/scores-by-subreddit`);
-      console.log("BY SUBREDDIT RES:    ", res.data);
-      setScoresBySubreddit(res.data.scoresBySubreddit);
-    } catch (err) {
-      setSearchStatus(false);
-      console.log("Error occurred retrieving scores: ", err.message);
-    }
-    setFetchingStatus(false);
-    setInput("");
-    setSearchStatus(success);
+    success = await fetchScoresBySubreddit(handle);
+    resetSearch(success);
+  };
+
+  const setHandleData = (e) => {
+    setRedditHandle(handleInput);
+    fetchHandleData(e, handleInput);
   };
 
   return (
     <SearchContainer>
-      <form onSubmit={(e) => fetchHandleData(e)}>
+      <form onSubmit={(e) => setHandleData(e)}>
         <input
-          value={input}
-          onChange={(e) => setHandleData(e)}
+          value={handleInput}
+          onChange={(e) => setHandleInput(e.target.value.toLowerCase().trim())}
           placeholder="Reddit handle"
           type="text"
           name="handle"
@@ -64,29 +79,30 @@ const SearchBar = () => {
         />
         <SearchButton type="submit">Search</SearchButton>
       </form>
-      <Loader loading={isFetching} />
-      {searchSuccess ? (
-        <SearchResults
-          handle={handle}
-          karma={karma}
-          scores={scoresBySubreddit}
-        />
-      ) : null}
+
+      <Loader loading={isFetching} handle={redditHandle} />
+      <SearchResults
+        success={searchSuccess}
+        errorMsg={errorMsg}
+        handle={redditHandle}
+        karma={karma}
+        scores={scoresBySubreddit}
+      />
     </SearchContainer>
   );
 };
 
-const Loader = ({ loading }) => {
+const Loader = ({ loading, handle }) => {
   if (loading) {
     return (
       <LoaderContainer>
-        <div>
-          <PuffLoader
-            css={override}
-            size={150}
-            color={"black"}
-            loading={true}
-          />
+        <div style={{ marginBottom: "60px" }}>
+          <LoadingCaption>
+            Searching {handle}'s comment and post history.
+            <br />
+            May take a while.
+          </LoadingCaption>
+          <BarLoader css={override} size={150} color={"black"} loading={true} />
         </div>
       </LoaderContainer>
     );
@@ -112,7 +128,7 @@ const SearchContainer = styled.div`
 const LoaderContainer = styled.div`
   position: fixed;
   background-color: white;
-  opacity: 0.6;
+  // opacity: 0.6;
   z-index: 6;
   height: 100vh;
   width: 100vw;
@@ -123,4 +139,9 @@ const LoaderContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+const LoadingCaption = styled.div`
+  font-size: 13px;
+  padding: 15px;
 `;
