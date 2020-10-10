@@ -16,7 +16,23 @@ const self = {
       args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-infobars"],
     });
     self.page = await self.browser.newPage();
-    await self.page.goto(REDDIT_URL(redditUrl), { waitUntil: "networkidle0" });
+
+    // page.goto does not throw error if valid http status code is returned
+    let res;
+    try {
+      res = await self.page.goto(REDDIT_URL(redditUrl), {
+        waitUntil: "networkidle0",
+        timeout: 60000,
+      });
+      // await self.page.screenshot({
+      //   path: `./karma_${handle}_screenshot.png`,
+      //   fullPage: true,
+      // });
+    } catch (err) {
+      return err;
+    }
+
+    return res.status();
   },
   initializeOverviewPosts: async (redditUrl) => {
     self.browser = await puppeteer.launch({
@@ -38,13 +54,20 @@ const self = {
         req.continue();
       }
     });
-    await self.page.goto(REDDIT_URL(redditUrl), { waitUntil: "networkidle0" });
+    let res;
+    try {
+      res = await self.page.goto(REDDIT_URL(redditUrl), {
+        waitUntil: "networkidle0",
+      });
+    } catch (err) {
+      return err;
+    }
+    return res.status();
   },
-  getKarma: async () => {
+  getKarma: async (handle) => {
     const interstitialButton = await self.page.$(
       'div[class="content"] > div[class="interstitial"] > form[class="pretty-form"] > div[class="buttons"] > button:nth-child(2)'
     );
-    debugger;
     if (interstitialButton) {
       await interstitialButton.click();
       await self.page.waitForNavigation({ waitUntil: "networkidle0" });
@@ -121,6 +144,8 @@ const self = {
         }
       }
     } while (results.length === nextAmount);
+    await self.page.close();
+    await self.browser.close();
     return aggregateScoreBySubreddit(results);
   },
   getMemberTotals: async (subreddits) => {
