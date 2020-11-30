@@ -1,42 +1,29 @@
 {
-  "name": "reddit-handle-scraper",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.3.2",
-    "@testing-library/user-event": "^7.1.2",
-    "axios": "^0.20.0",
-    "body-parser": "^1.19.0",
-    "concurrently": "^5.3.0",
-    "esm": "^3.2.25",
-    "express": "^4.17.1",
-    "morgan": "^1.10.0",
-    "nodemon": "^2.0.4",
-    "path": "^0.12.7",
-    "puppeteer": "^5.3.1"
+  "name": "cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bin/index.js",
+  "type": "module",
+  "bin": {
+    "scrape": "bin/index.js"
   },
   "scripts": {
-    "start": "nodemon -r esm index.js",
-    "client": "cd client && yarn start",
-    "build": "yarn --prefix client && yarn run build --prefix client",
-    "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\"",
-    "server": "nodemon -r esm index.js --ignore tests --ignore './client/'",
-    "heroku-postbuild": "cd client && yarn && yarn run build"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "keywords": [
+    "cli"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.0",
+    "chalk": "^4.1.0",
+    "clear": "^0.1.0",
+    "cli-table3": "^0.6.0",
+    "clui": "^0.3.6",
+    "esm": "^3.2.25",
+    "figlet": "^1.5.0",
+    "inquirer": "^7.3.3",
+    "puppeteer": "^5.5.0"
   }
 }
