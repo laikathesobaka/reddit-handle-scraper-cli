@@ -16,8 +16,7 @@ console.log(
   )
 );
 
-const Progress = CLI.Progress;
-const progressBar = new Progress(20);
+const Spinner = CLI.Spinner;
 
 const karmaTable = new Table({
   head: ["Total Karma"],
@@ -34,26 +33,23 @@ const run = async () => {
   // Create reddit scraper instance
   scraper.setHandleInfo(handle);
 
+  const status = new Spinner(`Fetching data associated with ${handle}...`);
+  status.start();
   // Initialize profile page associated with handle
   await scraper.initializeOverview();
-  console.log(progressBar.update(0.2));
 
   // Scrape amassed karma points section from proffile
   const { commentsKarma, postsKarma } = await scraper.fetchKarma();
 
-  console.log(progressBar.update(0.4));
   karmaTable.push({ Posts: [postsKarma] }, { Comments: [commentsKarma] });
 
   // Intialize posts and comments pages associated with handle
   await scraper.initializeOverviewPosts();
-  console.log(progressBar.update(0.7));
 
   const aggregates = await scraper.getScoresBySubreddit();
-  console.log(progressBar.update(0.9));
 
   const subreddits = Object.keys(aggregates);
   const subscriberCount = await scraper.getSubredditSubscriberCount(subreddits);
-  console.log(progressBar.update(2));
 
   for (const subreddit of subreddits) {
     aggregatesTable.push([
@@ -62,6 +58,8 @@ const run = async () => {
       aggregates[subreddit],
     ]);
   }
+  status.stop();
+
   console.log(karmaTable.toString());
   console.log(aggregatesTable.toString());
 };
